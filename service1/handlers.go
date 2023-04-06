@@ -2,14 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"microservice/models"
 	"net/http"
 )
-
-type User struct {
-	ID    int    `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
-}
 
 func usersHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
@@ -30,9 +25,9 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	var users []User
+	var users []models.User
 	for rows.Next() {
-		var user User
+		var user models.User
 		if err := rows.Scan(&user.ID, &user.Name, &user.Email); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -49,7 +44,7 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func createUser(w http.ResponseWriter, r *http.Request) {
-	var user User
+	var user models.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
